@@ -4,5 +4,7 @@
   "description": "Игра-приключение о туристе: собирай снаряжение, проходи маршруты и покоряй вершины гор.",
   "entryUrl": "https://dimariksw.github.io/super-turist-lo/",
   "iconUrl": "https://dimariksw.github.io/super-turist-lo/icon.png",
-  "termsUrl": "https://dimariksw.github.io/super-turist-lo/terms.html"
+  "termsUrl": "https://dimariksw.github.io/super-turist-lo/terms.html",
+  "privacyUrl": "https://dimariksw.github.io/super-turist-lo/privacy.html"
+
 }
