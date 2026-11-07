@@ -6,8 +6,9 @@
 <title>Super Турист LO</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+:root{--lo-bg:#87CEEB;--lo-text:#fff;--lo-accent:#ffcc00}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
-body{background:#87CEEB;font-family:sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
+body{background:var(--lo-bg);font-family:sans-serif;touch-action:none;-webkit-user-select:none;user-select:none}
 canvas{display:block}
 #ui{position:fixed;top:10px;left:10px;color:#fff;z-index:2;background:rgba(0,0,0,.35);padding:8px 14px;border-radius:12px;font-weight:bold;font-size:18px}
 #mute{position:fixed;top:10px;right:10px;z-index:2;font-size:20px;background:rgba(0,0,0,.35);color:#fff;border:none;border-radius:12px;padding:8px 12px;cursor:pointer}
@@ -18,9 +19,9 @@ body.touch .control-btn{display:flex}
 .btn-left{right:150px;bottom:46px;width:76px;height:76px}
 .btn-right{right:44px;bottom:46px;width:76px;height:76px}
 .control-btn.active{background:rgba(255,255,255,.55);transform:scale(.93)}
-.overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,40,60,.78);color:#fff;text-align:center;z-index:5;gap:16px;padding:20px}
+.overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,40,60,.78);color:var(--lo-text);text-align:center;z-index:5;gap:16px;padding:20px}
 .overlay h1{font-size:30px;text-shadow:2px 2px 0 #2c5f8a}
-.overlay button{padding:14px 40px;font-size:20px;font-weight:bold;cursor:pointer;background:#ffcc00;border:none;border-radius:14px;color:#5a3d00;box-shadow:0 4px 0 #b38f00}
+.overlay button{padding:14px 40px;font-size:20px;font-weight:bold;cursor:pointer;background:var(--lo-accent);border:none;border-radius:14px;color:#5a3d00;box-shadow:0 4px 0 #b38f00}
 .overlay button:active{transform:translateY(3px);box-shadow:0 1px 0 #b38f00}
 </style>
 </head>
@@ -618,32 +619,34 @@ loadLevel(0);
 requestAnimationFrame(loop);
 </script>
 <script type="module">
-// ===== LO.ink SDK: интеграция с хостом LO =====
-// При запуске внутри LO адаптер находится автоматически; вне LO игра работает автономно.
-function applyLOTheme(t){
-  try{
-    const ov=document.querySelectorAll('.overlay');
-    if(t.background)ov.forEach(o=>o.style.background=t.background);
-    if(t.text)ov.forEach(o=>o.style.color=t.text);
-    if(t.action)document.querySelectorAll('.overlay button').forEach(b=>b.style.background=t.action);
-    if(t.secondaryBackground)document.querySelectorAll('.overlay button').forEach(b=>b.style.color=t.text||'#5a3d00');
-  }catch(e){}
-}
+// ===== LO SDK: единый блок — тема + интеграция с хостом =====
+// Внутри LO: применяется тема платформы. Вне LO: тихий выход, игра работает автономно.
 (async()=>{
   try{
     const [ad,sdk]=await Promise.all([
       import('https://esm.sh/@lo-ink/adapter-lo'),
-      import('https://esm.sh/@lo-ink/miniapp-sdk')
+      import('https://esm.sh/@lo-ink/miniapp-sdk@0.19.1')
     ]);
     const adapter=(ad&&ad.createAdapter)?ad.createAdapter():null;
     if(!adapter)return; // нет хоста — автономный режим
     const client=sdk.createMiniAppClient(adapter);
     window.LO={adapter:adapter,client:client};
     const snap=adapter.snapshot?adapter.snapshot():null;
-    if(snap&&snap.theme)applyLOTheme(snap.theme);
+    const t=snap&&snap.theme;
+    if(t){
+      const r=document.documentElement.style;
+      if(t.background)r.setProperty('--lo-bg',t.background);
+      if(t.text)r.setProperty('--lo-text',t.text);
+      if(t.action)r.setProperty('--lo-accent',t.action);
+      document.querySelectorAll('.overlay').forEach(o=>{
+        if(t.background)o.style.background=t.background;
+        if(t.text)o.style.color=t.text;
+      });
+      if(t.action)document.querySelectorAll('.overlay button').forEach(b=>b.style.background=t.action);
+    }
     const chip=document.getElementById('verChip');
     if(chip)chip.textContent='v1.0.26 · LO';
-  }catch(e){/* автономный режим без SDK */}
+  }catch(e){/* SDK недоступен — автономный режим с запасными цветами */}
 })();
 </script>
 <div id="verChip" style="position:fixed;right:10px;bottom:8px;color:#fff;opacity:.8;font:600 13px sans-serif;text-shadow:0 1px 3px rgba(0,0,0,.55);z-index:9">v1.0.26</div>
