@@ -1,14 +1,8 @@
 {
+  "schemaVersion": 1,
   "name": "Super Turist",
-  "short_name": "Turist",
-  "version": "1.0.26",
-  "start_url": "https://dimariksw.github.io/super-turist-lo/",
-  "icon": "https://dimariksw.github.io/super-turist-lo/icon.png",
-  "icons": [
-    {
-      "src": "https://dimariksw.github.io/super-turist-lo/icon.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
-    }
-  ]
+  "description": "Игра-приключение о туристе: собирай снаряжение, проходи маршруты и покоряй вершины гор.",
+  "entryUrl": "https://dimariksw.github.io/super-turist-lo/",
+  "iconUrl": "https://dimariksw.github.io/super-turist-lo/icon.png",
+  "termsUrl": "https://dimariksw.github.io/super-turist-lo/terms.html"
 }
